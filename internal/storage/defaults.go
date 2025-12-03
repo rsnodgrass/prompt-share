@@ -41,9 +41,9 @@ func GenerateTitle(prompt string) string {
 }
 
 // GenerateFilename creates a filename from title and timestamp in the format:
-// YYYY-MM-DD-HH-MM-slugified-title.md
+// YYYY-MM-DD-slugified-title.md
 func GenerateFilename(title string, timestamp time.Time) string {
-	datePrefix := timestamp.Format("2006-01-02-15-04")
+	datePrefix := timestamp.Format("2006-01-02")
 	slug := Slugify(title)
 	return datePrefix + "-" + slug + ".md"
 }

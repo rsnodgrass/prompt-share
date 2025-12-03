@@ -41,6 +41,13 @@ Sleep 500ms
 Tab
 Sleep 300ms
 
+# Tab to Title field - edit the auto-generated title
+Tab
+Sleep 300ms
+Ctrl+U
+Type "refactor-auth-to-jwt"
+Sleep 400ms
+
 # Tab to Tool selector (already defaults to Claude Code)
 Tab
 Sleep 300ms
@@ -59,6 +66,6 @@ Ctrl+S
 Sleep 2s
 
 # View the saved crumb with glamour rendering
-Type "./crumb crumbs/2025*.md"
+Type "./crumb crumbs/*refactor*.md"
 Enter
 Sleep 3s

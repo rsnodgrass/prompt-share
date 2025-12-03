@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/textarea"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"crumb/internal/config"
@@ -57,11 +58,12 @@ var (
 
 type Model struct {
 	prompt     textarea.Model
+	title      textinput.Model
 	tags       components.TagInput
 	output     textarea.Model
 	toolSelect components.Dropdown
 
-	focusIndex int  // 0=prompt, 1=output, 2=tool, 3=tags
+	focusIndex int  // 0=prompt, 1=output, 2=title, 3=tool, 4=tags
 	showHelp   bool
 	showToast  bool
 	toastMsg   string
@@ -74,7 +76,7 @@ type Model struct {
 	height   int
 }
 
-func New(cfg *config.Config, tool string, stay bool) Model {
+func New(cfg *config.Config, tool, initialTitle string, stay bool) Model {
 	// initialize prompt textarea (focused first - most important field)
 	promptTA := textarea.New()
 	promptTA.Placeholder = "Enter your prompt here..."
@@ -82,6 +84,14 @@ func New(cfg *config.Config, tool string, stay bool) Model {
 	promptTA.SetHeight(8)
 	promptTA.ShowLineNumbers = false
 	promptTA.Focus()
+
+	// initialize title input (pre-populated when prompt is entered)
+	titleInput := textinput.New()
+	titleInput.Placeholder = "Auto-generated from prompt (editable)"
+	titleInput.CharLimit = 100
+	if initialTitle != "" {
+		titleInput.SetValue(initialTitle)
+	}
 
 	// initialize storage with output directory from config
 	// resolve relative path to absolute path based on cwd
@@ -118,6 +128,7 @@ func New(cfg *config.Config, tool string, stay bool) Model {
 
 	return Model{
 		prompt:     promptTA,
+		title:      titleInput,
 		tags:       tagsInput,
 		output:     outputTA,
 		toolSelect: toolDropdown,
@@ -215,7 +226,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, m.saveAndExit()
 
 		case "/", "ctrl+t":
-			m.setFocus(2) // tool selector
+			m.setFocus(3) // tool selector
 			return m, nil
 
 		case "tab":
@@ -240,12 +251,17 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.output, cmd = m.output.Update(msg)
 		cmds = append(cmds, cmd)
 
-	case 2: // tool selector
+	case 2: // title
+		var cmd tea.Cmd
+		m.title, cmd = m.title.Update(msg)
+		cmds = append(cmds, cmd)
+
+	case 3: // tool selector
 		var cmd tea.Cmd
 		m.toolSelect, cmd = m.toolSelect.Update(msg)
 		cmds = append(cmds, cmd)
 
-	case 3: // tags
+	case 4: // tags
 		var cmd tea.Cmd
 		m.tags, cmd = m.tags.Update(msg)
 		cmds = append(cmds, cmd)
@@ -283,18 +299,29 @@ func (m Model) View() string {
 	b.WriteString(m.output.View())
 	b.WriteString("\n\n")
 
-	// tool selector (index 2)
-	label = labelStyle.Render("Tool:")
+	// title field (index 2) - auto-populated, editable
+	label = labelStyle.Render("Title:")
 	if m.focusIndex == 2 {
+		label = focusedLabelStyle.Render("→ Title:")
+	}
+	b.WriteString(label + " ")
+	b.WriteString(helpStyle.Render("(for filename)"))
+	b.WriteString("\n")
+	b.WriteString(m.title.View())
+	b.WriteString("\n\n")
+
+	// tool selector (index 3)
+	label = labelStyle.Render("Tool:")
+	if m.focusIndex == 3 {
 		label = focusedLabelStyle.Render("→ Tool:")
 	}
 	b.WriteString(label + " ")
 	b.WriteString(m.toolSelect.View())
 	b.WriteString("\n\n")
 
-	// tags field (index 3)
+	// tags field (index 4)
 	label = labelStyle.Render("Tags:")
-	if m.focusIndex == 3 {
+	if m.focusIndex == 4 {
 		label = focusedLabelStyle.Render("→ Tags:")
 	}
 	b.WriteString(label + " ")
@@ -366,8 +393,10 @@ func (m *Model) setFocus(index int) {
 	case 1:
 		m.output.Blur()
 	case 2:
-		m.toolSelect.Blur()
+		m.title.Blur()
 	case 3:
+		m.toolSelect.Blur()
+	case 4:
 		m.tags.Blur()
 	}
 
@@ -381,18 +410,20 @@ func (m *Model) setFocus(index int) {
 	case 1:
 		m.output.Focus()
 	case 2:
-		m.toolSelect.Focus()
+		m.title.Focus()
 	case 3:
+		m.toolSelect.Focus()
+	case 4:
 		m.tags.Focus()
 	}
 }
 
 func (m *Model) focusNext() {
-	m.setFocus((m.focusIndex + 1) % 4)
+	m.setFocus((m.focusIndex + 1) % 5)
 }
 
 func (m *Model) focusPrev() {
-	m.setFocus((m.focusIndex - 1 + 4) % 4)
+	m.setFocus((m.focusIndex - 1 + 5) % 5)
 }
 
 // updateTextareaSizes dynamically adjusts textarea heights based on terminal size
@@ -433,8 +464,11 @@ func (m *Model) saveAndExit() tea.Cmd {
 		return HideToastAfter(2 * time.Second)
 	}
 
-	// auto-generate title from prompt
-	title := storage.GenerateTitle(m.prompt.Value())
+	// use title if provided, otherwise auto-generate from prompt
+	title := strings.TrimSpace(m.title.Value())
+	if title == "" {
+		title = storage.GenerateTitle(m.prompt.Value())
+	}
 
 	// generate filename
 	timestamp := storage.GetTimestamp()
@@ -462,6 +496,7 @@ func (m *Model) saveAndExit() tea.Cmd {
 	}
 
 	content.WriteString("---\n\n")
+	content.WriteString(fmt.Sprintf("# %s\n\n", title))
 	content.WriteString("## Prompt\n\n")
 	content.WriteString(m.prompt.Value())
 	content.WriteString("\n\n")
@@ -497,6 +532,7 @@ func (m *Model) saveAndExit() tea.Cmd {
 // clearFields resets all input fields to empty state
 func (m *Model) clearFields() {
 	m.prompt.Reset()
+	m.title.SetValue("")
 	// rebuild tag suggestions with fresh frequent tags
 	tagSuggestions := mergeTagSuggestions(m.config.FavoriteTags, m.storage.GetFrequentTags(10))
 	m.tags = components.NewTagInput(tagSuggestions)

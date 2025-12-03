@@ -29,6 +29,7 @@ func run() error {
 	// define flags
 	var (
 		toolFlag    string
+		titleFlag   string
 		stayFlag    bool
 		versionFlag bool
 		helpFlag    bool
@@ -36,6 +37,7 @@ func run() error {
 
 	flag.StringVar(&toolFlag, "tool", "", "override default tool for this session")
 	flag.StringVar(&toolFlag, "t", "", "override default tool for this session (shorthand)")
+	flag.StringVar(&titleFlag, "title", "", "set title for the prompt")
 	flag.BoolVar(&stayFlag, "stay", false, "don't exit after save (capture multiple prompts)")
 	flag.BoolVar(&versionFlag, "version", false, "show version")
 	flag.BoolVar(&versionFlag, "v", false, "show version (shorthand)")
@@ -74,7 +76,7 @@ func run() error {
 	switch command {
 	case "":
 		// default: launch TUI
-		return runTUI(cfg, toolFlag, stayFlag)
+		return runTUI(cfg, toolFlag, titleFlag, stayFlag)
 	case "readme":
 		return runReadme(cfg)
 	case "config":
@@ -91,7 +93,7 @@ func run() error {
 }
 
 // runTUI launches the TUI to capture a new prompt
-func runTUI(cfg *config.Config, toolOverride string, stay bool) error {
+func runTUI(cfg *config.Config, toolOverride, titleOverride string, stay bool) error {
 	// determine which tool to use
 	selectedTool := cfg.DefaultTool
 	if toolOverride != "" {
@@ -116,7 +118,7 @@ func runTUI(cfg *config.Config, toolOverride string, stay bool) error {
 	}
 
 	// create and run TUI model with tool pre-selected
-	model := tui.New(cfg, selectedTool, stay)
+	model := tui.New(cfg, selectedTool, titleOverride, stay)
 	p := tea.NewProgram(model, tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {
 		return fmt.Errorf("TUI error: %w", err)
