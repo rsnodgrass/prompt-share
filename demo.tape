@@ -11,7 +11,7 @@ Set Theme "Catppuccin Mocha"
 Set Padding 20
 
 # Set clean prompt (white "% ")
-Set TypingSpeed 50ms
+Set TypingSpeed 10ms
 Env PS1 "% "
 
 # Initialize crumbs directory with README
