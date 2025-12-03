@@ -15,8 +15,8 @@ func TestDefaultConfig(t *testing.T) {
 		t.Errorf("expected DefaultTool to be 'Claude Code', got '%s'", cfg.DefaultTool)
 	}
 
-	if cfg.OutputDir != "learning/prompts" {
-		t.Errorf("expected OutputDir to be 'learning/prompts', got '%s'", cfg.OutputDir)
+	if cfg.OutputDir != "crumbs" {
+		t.Errorf("expected OutputDir to be 'crumbs', got '%s'", cfg.OutputDir)
 	}
 
 	if cfg.CustomTools == nil {
@@ -88,8 +88,8 @@ func TestLoad_NoConfigFile(t *testing.T) {
 		t.Errorf("expected DefaultTool to be 'Claude Code', got '%s'", cfg.DefaultTool)
 	}
 
-	if cfg.OutputDir != "learning/prompts" {
-		t.Errorf("expected OutputDir to be 'learning/prompts', got '%s'", cfg.OutputDir)
+	if cfg.OutputDir != "crumbs" {
+		t.Errorf("expected OutputDir to be 'crumbs', got '%s'", cfg.OutputDir)
 	}
 }
 
@@ -180,8 +180,8 @@ func TestLoad_PartialConfig(t *testing.T) {
 		t.Errorf("expected DefaultTool to be 'Claude Code', got '%s'", cfg.DefaultTool)
 	}
 
-	if cfg.OutputDir != "learning/prompts" {
-		t.Errorf("expected OutputDir to be 'learning/prompts', got '%s'", cfg.OutputDir)
+	if cfg.OutputDir != "crumbs" {
+		t.Errorf("expected OutputDir to be 'crumbs', got '%s'", cfg.OutputDir)
 	}
 
 	if len(cfg.CustomTools) != 1 {

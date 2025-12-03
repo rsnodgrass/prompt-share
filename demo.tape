@@ -10,8 +10,12 @@ Set Height 650
 Set Theme "Catppuccin Mocha"
 Set Padding 20
 
-# Initialize prompts directory first
-Type "mkdir -p learning/prompts"
+# Set clean prompt (white "% ")
+Set TypingSpeed 50ms
+Env PS1 "% "
+
+# Initialize crumbs directory
+Type "mkdir -p crumbs"
 Enter
 Sleep 500ms
 

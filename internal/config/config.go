@@ -13,7 +13,7 @@ type Config struct {
 	DefaultTool  string   `yaml:"default_tool"`
 	CustomTools  []string `yaml:"custom_tools"`
 	FavoriteTags []string `yaml:"favorite_tags"`
-	OutputDir    string   `yaml:"output_dir"` // defaults to "learning/prompts"
+	OutputDir    string   `yaml:"output_dir"` // defaults to "crumbs"
 }
 
 // builtInTools is the hardcoded list of built-in tools
@@ -36,7 +36,7 @@ func DefaultConfig() *Config {
 		DefaultTool:  "Claude Code",
 		CustomTools:  []string{},
 		FavoriteTags: []string{},
-		OutputDir:    "learning/prompts",
+		OutputDir:    "crumbs",
 	}
 }
 
@@ -67,7 +67,7 @@ func Load() (*Config, error) {
 		cfg.DefaultTool = "Claude Code"
 	}
 	if cfg.OutputDir == "" {
-		cfg.OutputDir = "learning/prompts"
+		cfg.OutputDir = "crumbs"
 	}
 	if cfg.CustomTools == nil {
 		cfg.CustomTools = []string{}

@@ -63,7 +63,7 @@ make install
 ## Quick Start
 
 ```bash
-# Initialize prompts directory in your repo
+# Initialize crumbs directory in your repo
 crumb init
 
 # Capture a new prompt
@@ -77,7 +77,7 @@ crumb readme
 
 ```bash
 crumb              # Launch TUI to capture a prompt
-crumb init         # Create learning/prompts/ directory
+crumb init         # Create crumbs/ directory
 crumb readme       # Generate/update prompt index
 crumb config       # Open config in $EDITOR
 crumb -t Cursor    # Override default tool
@@ -98,7 +98,7 @@ favorite_tags:
   - debugging
   - design
   - refactoring
-output_dir: learning/prompts
+output_dir: crumbs
 ```
 
 ## Keyboard Shortcuts

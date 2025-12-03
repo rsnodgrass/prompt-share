@@ -4,4 +4,4 @@ completions/
 *.exe
 .DS_Store
 /crumb
-learning/
+crumbs/

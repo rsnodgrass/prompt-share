@@ -241,7 +241,7 @@ custom_tools: []
 favorite_tags: []
 
 # output directory for prompts (relative to current working directory)
-output_dir: learning/prompts
+output_dir: crumbs
 `
 
 	return os.WriteFile(path, []byte(defaultContent), 0644)
@@ -256,9 +256,9 @@ USAGE:
 
 COMMANDS:
   (default)      launch TUI to capture a new prompt
-  readme         generate/update learning/prompts/README.md
+  readme         generate/update crumbs/README.md
   config         open config file in $EDITOR
-  init           create learning/prompts/ directory with starter README
+  init           create crumbs/ directory with starter README
 
 FLAGS:
   -t, --tool <name>    override default tool for this session
