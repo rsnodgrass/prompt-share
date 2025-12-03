@@ -41,12 +41,6 @@ Sleep 500ms
 Tab
 Sleep 300ms
 
-# Tab to Title field - add optional title
-Tab
-Sleep 300ms
-Type "Refactor auth to JWT"
-Sleep 400ms
-
 # Tab to Tool selector (already defaults to Claude Code)
 Tab
 Sleep 300ms
@@ -55,13 +49,7 @@ Sleep 300ms
 Tab
 Sleep 300ms
 
-# Add tags using number keys (quick-select favorites)
-Type "1"
-Sleep 200ms
-Type "3"
-Sleep 200ms
-
-# Also type a custom tag
+# Add a custom tag
 Type "security"
 Enter
 Sleep 300ms
@@ -70,5 +58,7 @@ Sleep 300ms
 Ctrl+S
 Sleep 2s
 
-# Show the result
-Sleep 500ms
+# View the saved crumb with glamour rendering
+Type "./crumb crumbs/2025*.md"
+Enter
+Sleep 3s

@@ -74,17 +74,12 @@ func renderContent(m *Model) string {
 	lines = append(lines, promptSection)
 	lines = append(lines, "")
 
-	// output field (index 1) - second most important
+	// output field (index 1)
 	outputSection := renderOutputFieldAlt(m)
 	lines = append(lines, outputSection)
 	lines = append(lines, "")
 
-	// title field (index 2) - optional
-	titleSection := renderTitleFieldAlt(m)
-	lines = append(lines, titleSection)
-	lines = append(lines, "")
-
-	// tags field (index 4) - optional
+	// tags field (index 3)
 	tagsSection := renderTagsFieldAlt(m)
 	lines = append(lines, tagsSection)
 	lines = append(lines, "")
@@ -120,29 +115,10 @@ func renderPromptFieldAlt(m *Model) string {
 	return label + "\n" + inputBox
 }
 
-// renderTitleFieldAlt renders the title input (index 2)
-func renderTitleFieldAlt(m *Model) string {
-	label := LabelStyle.Render("Title: ")
-	if m.focusIndex == 2 {
-		label = LabelStyle.Render("→ Title: ")
-	}
-
-	content := m.title.View()
-
-	if m.focusIndex == 2 {
-		content = FocusedBorderStyle.
-			Inline(true).
-			Padding(0, 1).
-			Render(content)
-	}
-
-	return label + content + " " + HelpStyle.Render("(optional, auto-generated)")
-}
-
-// renderTagsFieldAlt renders the tags input (index 4)
+// renderTagsFieldAlt renders the tags input (index 3)
 func renderTagsFieldAlt(m *Model) string {
 	label := LabelStyle.Render("Tags: ")
-	if m.focusIndex == 4 {
+	if m.focusIndex == 3 {
 		label = LabelStyle.Render("→ Tags: ")
 	}
 
